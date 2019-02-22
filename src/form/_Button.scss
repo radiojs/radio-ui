@@ -1,0 +1,45 @@
+.Button, .btn {
+  display: inline-block;
+  box-sizing: border-box;
+  height: $buttonHeight;
+  padding: 10px 20px;
+  border: solid 1px $colorBorder;
+  border-radius: $borderRadius;
+  background: $colorWhite;
+  color: $colorButton;
+  font-size: 1em;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+
+  &.large {
+    height: $buttonHeightLarge;
+    padding: 12px 24px;
+    font-size: 1.2em;
+  }
+
+  &.small {
+    height: $buttonHeightSmall;
+    padding: 8px 16px;
+    font-size: 0.8em;
+  }
+
+  &:hover {
+    background: $colorGray;
+    color: $colorButtonHover;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &.primary {
+    border-color: $colorPrimary;
+    background: $colorPrimary;
+    color: $colorWhite;
+  }
+
+  &.block {
+    width: 100%;
+  }
+}

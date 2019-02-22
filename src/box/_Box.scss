@@ -1,0 +1,43 @@
+@import '../scss/variables';
+
+.Box {
+  width: 50px;
+  height: 50px;
+  border: solid 1px $colorBorder;
+  
+  &.round {
+    border-radius: 50%;
+  }
+  
+  &.white {
+    background: $colorWhite;
+  }
+  
+  &.black {
+    background: $colorBlack;
+  }
+  
+  &.gray {
+    background: $colorGray;
+  }
+  
+  &.red {
+    background: $colorRed;
+  }
+  
+  &.green {
+    background: $colorGreen;
+  }
+  
+  &.blue {
+    background: $colorBlue;
+  }
+  
+  &.primary {
+    background: $colorPrimary;
+  }
+  
+  &.disabled {
+    background: $colorDisabled;
+  }
+}

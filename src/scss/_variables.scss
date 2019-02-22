@@ -1,0 +1,41 @@
+$headerHeight:          50px !default;
+$sidebarWidthFixed:     240px !default;
+$pageWidthMax:          960px !default;
+
+$buttonHeight:          40px !default;
+$buttonHeightLarge:     48px !default;
+$buttonHeightSmall:     32px !default;
+
+$borderRadius:          5px !default;
+
+$zIndexHeader:          1010 !default;
+$zIndexSidebar:         1000 !default;
+
+$colorRed:              #f00 !default;
+$colorGray:             #ccc !default;
+$colorDarkGray:         #444 !default;
+$colorLightGray:        #eee !default;
+$colorWhite:            #fff !default;
+$colorBlack:            #000 !default;
+$colorGreen:            #0d3 !default;
+$colorBlue:             #33d !default;
+
+$colorPrimary:          #36f !default;
+$colorDisabled:         #ccc !default;
+$colorBorder:           #ccc !default;
+$colorBg:               #f5f5f5 !default;
+$colorError:            #f00 !default;
+$colorErrorBg:          #fee !default;
+
+$colorSidebarBg:        #ddd !default;
+
+$colorButton:           $colorDarkGray !default;
+$colorButtonHover:      $colorBlack !default;
+
+$colorText:             $colorBlack !default;
+$colorTextLabel:        #777 !default;
+
+$colorModalBg:          #fff !default;
+$colorModalOverlayBg:   rgba(0, 0, 0, 0.5) !default;
+
+$fontSizeBase:          16px !default;

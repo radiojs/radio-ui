@@ -1,0 +1,30 @@
+.Form {
+  margin: 20px 0;
+
+  .form-control {
+    position: relative;
+
+    label {
+      display: block;
+      color: $colorTextLabel;
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+  }
+
+  .form-control + .form-control {
+    margin-top: 15px;
+  }
+
+  .form-actions {
+    margin-top: 20px;
+  }
+
+  &.no-border {
+    margin: 0;
+
+    .ContentEditable {
+      border: none;
+    }
+  }
+}

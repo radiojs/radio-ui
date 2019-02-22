@@ -1,0 +1,12 @@
+.Input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 5px;
+  border: solid 1px $colorBorder;
+  font-size: 1em;
+  line-height: 1.5em;
+
+  &:focus {
+    outline: 0;
+  }
+}

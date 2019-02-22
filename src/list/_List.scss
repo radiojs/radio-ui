@@ -1,0 +1,29 @@
+.List {
+  margin: 10px 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+
+    .right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0;
+    }
+  }
+
+  li + li {
+    margin-top: 10px;
+  }
+
+  &.horizontal {
+    > li {
+      display: inline-block;
+    }
+  }
+}
