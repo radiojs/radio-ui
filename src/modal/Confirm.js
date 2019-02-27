@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
 
-import { t } from '../../lib';
 import Button from '../form/Button';
 
 class Confirm extends React.Component {
@@ -25,7 +24,7 @@ class Confirm extends React.Component {
   }
 
   render() {
-    const { show, message } = this.props;
+    const { show, message, appElementId } = this.props;
 
     if (!show) return null;
 
@@ -34,14 +33,15 @@ class Confirm extends React.Component {
         className="Modal"
         overlayClassName="ModalOverlay"
         isOpen={show}
+        appElement={document.getElementById(appElementId)}
       >
         <header></header>
         <main>
           <p className="message">{message}</p>
         </main>
         <footer>
-          <Button onClick={this.handleNo}>{t('no')}</Button>
-          <Button className="primary" onClick={this.handleYes}>{t('yes')}</Button>
+          <Button onClick={this.handleNo}>{'no'}</Button>
+          <Button className="primary" onClick={this.handleYes}>{'yes'}</Button>
         </footer>
       </ReactModal>
     )
@@ -51,10 +51,12 @@ class Confirm extends React.Component {
 Confirm.propTypes = {
   show: PropTypes.bool,
   message: PropTypes.string,
+  appElementId: PropTypes.string,
 };
 
 Confirm.defaultProps = {
   show: true,
+  appElementId: 'root',
 };
 
 export default Confirm;

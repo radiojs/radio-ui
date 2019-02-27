@@ -7,24 +7,22 @@ import TextArea from './form/TextArea';
 
 import Icon from './icon/Icon';
 
-import { Header, Layout, Page, SideBar, withLayout } from './layout';
-
 import ErrorMessages from './message/ErrorMessages';
+
+import Confirm from './modal/Confirm';
+import Modal from './modal/Modal';
 
 import Spinner from './spinner/Spinner';
 
 export {
   Box,
   Button,
+  Confirm,
   ErrorMessages,
   Form,
-  Header,
   Icon,
   Input,
-  Layout,
-  Page,
-  SideBar,
+  Modal,
   Spinner,
   TextArea,
-  withLayout,
 };

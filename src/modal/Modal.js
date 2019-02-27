@@ -19,7 +19,7 @@ class Modal extends React.Component {
   }
 
   render() {
-    const { className, show, title, children } = this.props;
+    const { className, appElementId, show, title, children } = this.props;
 
     if (!show) return null;
 
@@ -28,6 +28,7 @@ class Modal extends React.Component {
         className={`Modal full ${className}`.trim()}
         overlayClassName="ModalOverlay"
         isOpen={show}
+        appElement={document.getElementById(appElementId)}
       >
         <header>
           <div className="title">{title}</div>
@@ -47,6 +48,7 @@ class Modal extends React.Component {
 
 Modal.propTypes = {
   className: PropTypes.string,
+  appElementId: PropTypes.string,
   show: PropTypes.bool,
   title: PropTypes.string,
   onClose: PropTypes.func,
@@ -54,6 +56,7 @@ Modal.propTypes = {
 
 Modal.defaultProps = {
   className: '',
+  appElementId: 'root',
   show: true,
   title: '',
 };
