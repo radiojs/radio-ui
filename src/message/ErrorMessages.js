@@ -1,26 +1,29 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { t } from '../../lib';
+const ErrorMessages = ({ errors }) => {
 
-const ErrorMessages = ({ error }) => {
-  if (!error) return null;
-
-  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-    return (
-      <div className="ErrorMessages GraphQLError">
-        {error.graphQLErrors.map(({ message }, i) => (
-          <span key={i}>{t(message)}</span>
-        ))}
-      </div>
-    );
+  if (typeof errors === 'string') {
+    errors = [errors];
   }
 
-  if (!_.isEmpty(error.networkError)) {
-    return <div className="ErrorMessages NetworkError">{JSON.stringify(error.networkError)}</div>
-  }
+  if (!errors || !errors.length === 0) return null;
 
-  return <div className="ErrorMessages">{error.message}</div>;
+  return (
+    <ul className="ErrorMessages">
+      {errors.map((error, i) => (
+        <li key={i}>{error}</li>
+      ))}
+    </ul>
+  );
+};
+
+ErrorMessages.propTypes = {
+  errors: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ])
 };
 
 export default ErrorMessages;

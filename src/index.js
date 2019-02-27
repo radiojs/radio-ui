@@ -9,11 +9,14 @@ import Icon from './icon/Icon';
 
 import { Header, Layout, Page, SideBar, withLayout } from './layout';
 
-import './scss/index.scss';
+import ErrorMessages from './message/ErrorMessages';
+
+import Spinner from './spinner/Spinner';
 
 export {
   Box,
   Button,
+  ErrorMessages,
   Form,
   Header,
   Icon,
@@ -21,6 +24,7 @@ export {
   Layout,
   Page,
   SideBar,
+  Spinner,
   TextArea,
   withLayout,
 };

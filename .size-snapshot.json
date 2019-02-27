@@ -1,0 +1,7 @@
+{
+  "dist/bundle.js": {
+    "bundled": 804510,
+    "minified": 217324,
+    "gzipped": 58577
+  }
+}
