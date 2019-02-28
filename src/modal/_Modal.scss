@@ -83,7 +83,6 @@
 
     > main {
       height: calc(100% - #{$headerHeight});
-      padding: 0;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
 
