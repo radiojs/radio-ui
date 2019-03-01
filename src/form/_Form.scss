@@ -4,7 +4,7 @@
   .form-control {
     position: relative;
 
-    label {
+    > label {
       display: block;
       color: $colorTextLabel;
       font-size: 0.9em;
@@ -17,7 +17,16 @@
   }
 
   .form-actions {
+    position: relative;
     margin-top: 20px;
+
+    .right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0;
+      margin-top: 20px;
+    }
   }
 
   &.no-border {
