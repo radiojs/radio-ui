@@ -11,6 +11,7 @@ class Confirm extends React.Component {
 
     this.handleYes = this.handleYes.bind(this);
     this.handleNo = this.handleNo.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleYes() {
@@ -23,8 +24,15 @@ class Confirm extends React.Component {
     onAnswer && onAnswer(false);
   }
 
+  handleClick(e, i) {
+    e.preventDefault();
+    
+    const { onAnswer } = this.props;
+    onAnswer && onAnswer(i);
+  }
+
   render() {
-    const { show, message, appElementId } = this.props;
+    const { show, message, buttons, appElementId } = this.props;
 
     if (!show) return null;
 
@@ -40,8 +48,13 @@ class Confirm extends React.Component {
           <p className="message">{message}</p>
         </main>
         <footer>
-          <Button onClick={this.handleNo}>{'no'}</Button>
-          <Button className="primary" onClick={this.handleYes}>{'yes'}</Button>
+          {buttons.map((button, i) => (
+            <Button
+              key={i}
+              className={button.style}
+              onClick={ (e) => { this.handleClick(e, i); } }
+            >{button.title}</Button>
+          ))}
         </footer>
       </ReactModal>
     )
@@ -51,11 +64,18 @@ class Confirm extends React.Component {
 Confirm.propTypes = {
   show: PropTypes.bool,
   message: PropTypes.string,
+  buttons: PropTypes.arrayOf(PropTypes.object),
   appElementId: PropTypes.string,
 };
 
 Confirm.defaultProps = {
   show: true,
+  buttons: [{
+    title: 'No',
+  }, {
+    title: 'Yes',
+    style: 'primary',
+  }],
   appElementId: 'root',
 };
 
