@@ -28,7 +28,7 @@ const commonjsOptions = {
 const input = "./src/index.js";
 
 const output = {
-  file: "dist/radio-ui.min.js",
+  file: "dist/radio-ui.js",
   format: "cjs",
   globals,
 };
