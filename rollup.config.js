@@ -3,9 +3,10 @@ import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import replace from "rollup-plugin-replace";
 import { sizeSnapshot } from "rollup-plugin-size-snapshot";
-import sass from "rollup-plugin-sass";
-import postcss from "rollup-plugin-postcss";
-import collectSass from "rollup-plugin-collect-sass";
+// import sass from "rollup-plugin-sass";
+// import postcss from "rollup-plugin-postcss";
+// import collectSass from "rollup-plugin-collect-sass";
+import copy from 'rollup-plugin-copy-glob';
 
 const globals = {
   react: "React",
@@ -27,7 +28,7 @@ const commonjsOptions = {
 const input = "./src/index.js";
 
 const output = {
-  file: "dist/bundle.js",
+  file: "dist/radio-ui.min.js",
   format: "cjs",
   globals,
 };
@@ -42,15 +43,8 @@ export default {
     commonjs(commonjsOptions),
     replace({ "process.env.NODE_ENV": JSON.stringify("development") }),
     sizeSnapshot(),
-    collectSass({
-//      extract: './dist/style.scss',
-    }),
-    //sass({
-    //  input: './src/style.scss',
-    //  output: 'dist/style.css'
-    //}),
-    // postcss({
-    //  modules: true
-    // })
+    copy([
+      { files: 'src/**/*.scss', dest: 'dist/scss'}
+    ])
   ]
 };

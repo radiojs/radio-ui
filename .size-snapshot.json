@@ -1,7 +1,12 @@
 {
   "dist/bundle.js": {
-    "bundled": 758763,
-    "minified": 193464,
-    "gzipped": 54527
+    "bundled": 758299,
+    "minified": 193168,
+    "gzipped": 54403
+  },
+  "dist/radio-ui.min.js": {
+    "bundled": 758299,
+    "minified": 193168,
+    "gzipped": 54403
   }
 }
