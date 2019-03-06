@@ -18,6 +18,8 @@ import Modal from './modal/Modal';
 
 import Spinner from './spinner/Spinner';
 
+import TextEditor from './text-editor/TextEditor';
+
 export {
   Box,
   Button,
@@ -32,4 +34,5 @@ export {
   Radio,
   Spinner,
   TextArea,
+  TextEditor,
 };
