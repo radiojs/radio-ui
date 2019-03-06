@@ -9,6 +9,8 @@ import TextArea from './form/TextArea';
 
 import Icon from './icon/Icon';
 
+import List from './list/List';
+
 import ErrorMessages from './message/ErrorMessages';
 
 import Confirm from './modal/Confirm';
@@ -25,6 +27,7 @@ export {
   Form,
   Icon,
   Input,
+  List,
   Modal,
   Radio,
   Spinner,
