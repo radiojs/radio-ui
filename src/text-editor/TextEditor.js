@@ -46,7 +46,7 @@ class TextEditor extends Component {
         {label && <label>{label}</label>}
         <ContentEditable
           html={value}
-          autoFocus
+          autoFocus={autoFocus}
           onChange={this.handleChange}
           onBlur={onBlur}
         />

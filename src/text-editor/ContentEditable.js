@@ -74,7 +74,6 @@ class ContentEditable extends React.Component {
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
-      this.element.focus();
     }
 
     if (onChange && html !== this.lastHtml) {
