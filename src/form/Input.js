@@ -5,10 +5,18 @@ class Input extends React.Component {
   constructor(props) {
     super(props);
 
+    this.input = React.createRef();
+
     this.handleChange = this.handleChange.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.renderErrors = this.renderErrors.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      this.input.current.focus();
+    }
   }
 
   handleChange(e) {
@@ -50,6 +58,7 @@ class Input extends React.Component {
       <div className={className}>
         {label && (<label>{label}</label>)}
         <input
+          ref={this.input}
           className="Input"
           type={type}
           name={name}
@@ -72,6 +81,7 @@ Input.propTypes = {
   value: PropTypes.string,
   placeholder: PropTypes.string,
   errors: PropTypes.arrayOf(PropTypes.string),
+  autoFocus: PropTypes.bool,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
@@ -80,6 +90,7 @@ Input.propTypes = {
 Input.defaultProps = {
   type: 'text',
   placeholder: '',
+  autoFocus: false,
 };
 
 export default Input;

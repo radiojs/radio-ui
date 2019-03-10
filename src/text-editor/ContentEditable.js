@@ -115,7 +115,7 @@ ContentEditable.defaultProps = {
   tagName: 'div',
   className: '',
   disabled: false,
-  autoFocus: true,
+  autoFocus: false,
   placeholder: '',
 };
 
