@@ -1,47 +1,28 @@
 import React from 'react';
-import {
-  FaRegEdit,
-} from 'react-icons/fa';
-import {
-  FiEdit,
-  FiLogIn,
-  FiLogOut,
-} from 'react-icons/fi';
-import {
-  GoTrashcan
-} from 'react-icons/go';
-import {
-  MdClear,
-  MdKeyboardArrowDown,
-  MdKeyboardArrowLeft,
-  MdKeyboardArrowUp,
-  MdMenu,
-  MdMoreHoriz,
-  MdPerson,
-} from 'react-icons/md';
-
-const Icons = {
-  edit: FaRegEdit,
-  write: FiEdit,
-  signIn: FiLogIn,
-  signOut: FiLogOut,
-  remove: GoTrashcan,
-  close: MdClear,
-  arrowDown: MdKeyboardArrowDown,
-  arrowUp: MdKeyboardArrowUp,
-  back: MdKeyboardArrowLeft,
-  menu: MdMenu,
-  more: MdMoreHoriz,
-  user: MdPerson,
-};
+import PropTypes from 'prop-types';
+import { MdClear } from 'react-icons/md';
 
 class Icon extends React.Component {
+  constructor(props) {
+    super(props);
+
+    if (props.icons) {
+      Icon.icons = props.icons;
+    }
+  }
+
   render() {
     const { name } = this.props;
-    const Component = Icons[name];
+    const Component = Icon.icons[name];
 
-    return <Component {...this.props} />
+    return Component && <Component {...this.props} />;
   }
 }
+
+Icon.icons = { close: MdClear };
+
+Icon.propTypes = {
+  icons: PropTypes.object,
+};
 
 export default Icon;
