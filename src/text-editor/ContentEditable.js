@@ -6,14 +6,18 @@ class ContentEditable extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { html: ''};
+    this.state = {
+      html: '',
+    };
 
     this.emitChange = this.emitChange.bind(this);
   }
 
   componentDidMount() {
-    const { value, autoFocus } = this.props;
+    const { value, autoFocus, onSelectChange } = this.props;
     this.setState({ html: value });
+
+    document.addEventListener('selectionchange', onSelectChange);
 
     if (autoFocus && this.element) {
       this.element.focus();
@@ -29,6 +33,11 @@ class ContentEditable extends React.Component {
       this.element.innerHTML = this.props.html;
     }
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('selectionchange', this.props.onSelectChange);
+  }
+
 /*
   componentWillReceiveProps(nextProps) {
     const { value } = nextProps;
@@ -68,12 +77,14 @@ class ContentEditable extends React.Component {
     if (!html) {
       html = '<p><br /></p>';
       this.element.innerHTML = html;
+      /*
       const range = document.createRange();
       const sel = window.getSelection();
       range.setStart(this.element.childNodes[0], 1);
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
+      */
     }
 
     if (onChange && html !== this.lastHtml) {
@@ -109,6 +120,7 @@ ContentEditable.propTypes = {
   placeholder: PropTypes.string,
   onBlur: PropTypes.func,
   onKeyDown: PropTypes.func,
+  onSelectChange: PropTypes.func,
 };
 
 ContentEditable.defaultProps = {
@@ -117,6 +129,7 @@ ContentEditable.defaultProps = {
   disabled: false,
   autoFocus: false,
   placeholder: '',
+  onSelectChange: () => {},
 };
 
 export default ContentEditable;

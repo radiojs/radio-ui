@@ -21,6 +21,8 @@ import Spinner from './spinner/Spinner';
 
 import TextEditor from './text-editor/TextEditor';
 
+import ToolBar from './toolbar/ToolBar';
+
 export {
   Alert,
   Box,
@@ -37,4 +39,5 @@ export {
   Spinner,
   TextArea,
   TextEditor,
+  ToolBar,
 };
