@@ -21,7 +21,8 @@ const babelOptions = {
 const commonjsOptions = {
   include: /node_modules/,
   namedExports: {
-    "prop-types": ["object", "oneOfType", "element", "bool", "func"]
+    "prop-types": ["object", "oneOfType", "element", "bool", "func"],
+    "draft-js/lib/Draft.js": ["Editor", "EditorState", "RichUtils"]
   }
 };
 
@@ -44,7 +45,8 @@ export default {
     replace({ "process.env.NODE_ENV": JSON.stringify("development") }),
     sizeSnapshot(),
     copy([
-      { files: 'src/**/*.scss', dest: 'dist/scss'}
+      { files: 'src/**/*.scss', dest: 'dist/scss' }
     ])
-  ]
+  ],
+  context: "this"
 };

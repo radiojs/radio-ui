@@ -23,6 +23,8 @@ import TextEditor from './text-editor/TextEditor';
 
 import ToolBar from './toolbar/ToolBar';
 
+import WysiwygEditor from './wysiwyg-editor/WysiwygEditor';
+
 export {
   Alert,
   Box,
@@ -40,4 +42,5 @@ export {
   TextArea,
   TextEditor,
   ToolBar,
+  WysiwygEditor,
 };
