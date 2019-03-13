@@ -22,7 +22,15 @@ const commonjsOptions = {
   include: /node_modules/,
   namedExports: {
     "prop-types": ["object", "oneOfType", "element", "bool", "func"],
-    "draft-js/lib/Draft.js": ["Editor", "EditorState", "RichUtils"]
+    "draft-js/lib/Draft.js": [
+      "ContentState",
+      "convertFromHTML",
+      "convertToRaw",
+      "DefaultDraftBlockRenderMap",
+      "Editor",
+      "EditorState",
+      "RichUtils"
+    ]
   }
 };
 

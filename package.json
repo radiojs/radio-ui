@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "draft-js": "^0.10.5",
+    "draftjs-to-html": "^0.8.4",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
     "node-polyglot": "^2.3.0",
