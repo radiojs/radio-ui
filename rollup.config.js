@@ -23,8 +23,10 @@ const commonjsOptions = {
   namedExports: {
     "prop-types": ["object", "oneOfType", "element", "bool", "func"],
     "draft-js/lib/Draft.js": [
+      "ContentBlock",
       "ContentState",
       "convertFromHTML",
+      "convertFromRaw",
       "convertToRaw",
       "DefaultDraftBlockRenderMap",
       "Editor",

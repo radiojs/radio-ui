@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   ContentState,
   convertFromHTML,
+  convertFromRaw,
   convertToRaw,
   DefaultDraftBlockRenderMap,
   Editor,
@@ -23,14 +24,20 @@ class WysiwygEditor extends React.Component {
     this.editor = React.createRef();
 
     const { name, value } = props;
-    let  editorState;
-    const { contentBlocks, entityMap } = convertFromHTML(value);
-    if (contentBlocks) {
-      const state = ContentState.createFromBlockArray(contentBlocks, entityMap);
-      editorState = EditorState.createWithContent(state); 
-    } else {
-      editorState = EditorState.createEmpty();
-    }
+    let { contentBlocks, entityMap } = convertFromHTML(value);
+    const contentState = contentBlocks ? 
+      ContentState.createFromBlockArray(contentBlocks, entityMap) :
+      convertFromRaw({
+        blocks: [{
+          text: '',
+          type: 'header-one',
+        }, {
+          text: '',
+          type: 'unstyled',
+        }],
+        entityMap: {},
+      });
+    const editorState = EditorState.createWithContent(contentState); 
 
     this.state = { name, editorState };
 
@@ -41,6 +48,7 @@ class WysiwygEditor extends React.Component {
     this.handleActionBold = this.handleActionBold.bind(this);
     this.handleActionItalic = this.handleActionItalic.bind(this);
     this.handleActionUnderlined = this.handleActionUnderlined.bind(this);
+    this.handleActionBlockQuote = this.handleActionBlockQuote.bind(this);
   }
 
   componentDidMount() {
@@ -64,8 +72,9 @@ class WysiwygEditor extends React.Component {
     const contentState = state ?
       state.getCurrentContent() : editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
-    const value = draftToHtml(rawContentState);
-    onChange(name, value);
+    const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
+    const content = draftToHtml(rawContentState);
+    onChange(name, { title, content });
   }
 
   handleKeyCommand(command, editorState) {
@@ -108,16 +117,28 @@ class WysiwygEditor extends React.Component {
     this.handleChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'));
   }
 
+  handleActionBlockQuote() {
+    // TODO
+  }
+
   render() {
+    const { placeholder } = this.props;
     const { editorState } = this.state;
 
-    const blockRenderMap = Immutable.Map({ 'unstyled': { element: 'p' } });
+    const blockRenderMap = Immutable.Map({
+      'unstyled': {
+        element: 'div',
+        aliasedElements: ['p'],
+        className: 'unstyled',
+      },
+     });
 
     return (
       <div className="WysiwygEditor">
         <Editor
           ref={this.editor}
           editorState={editorState}
+          placeholder={placeholder}
           blockRenderMap={DefaultDraftBlockRenderMap.merge(blockRenderMap)}
           handleKeyCommand={this.handleKeyCommand}
           onChange={this.handleChange}
@@ -132,6 +153,9 @@ class WysiwygEditor extends React.Component {
           <Button className="icon" onClick={this.handleActionUnderlined}>
             <Icon name="underlined" />
           </Button>
+          <Button className="icon" onClick={this.handleActionBlockQuote}>
+            <Icon name="blockquote" />
+          </Button>
         </ToolBar>
       </div>
     );
@@ -141,6 +165,7 @@ class WysiwygEditor extends React.Component {
 WysiwygEditor.propTypes = {
   name: PropTypes.string,
   value: PropTypes.string,
+  placeholder: PropTypes.string,
   autoFocus: PropTypes.bool,
   autoSave: PropTypes.number,
 };

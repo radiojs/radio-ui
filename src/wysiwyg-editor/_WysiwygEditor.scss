@@ -3,9 +3,18 @@
     background: transparent;
 
     .DraftEditor-root {
-        h1, h2, h3, h4, h5, h6, p {
+        h1, h2, h3, h4, h5, h6, p, .public-DraftStyleDefault-block {
             margin: 0;
             line-height: 2em;
         }
     };
+
+    .public-DraftEditorPlaceholder-root {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: $colorGray;
+        font-size: 1.6em;
+        pointer-events: none;
+    }
 }
