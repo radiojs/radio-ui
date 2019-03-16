@@ -16,6 +16,8 @@ import Immutable from 'immutable';
 import Button from '../form/Button';
 import Icon from '../icon/Icon';
 import ToolBar from '../toolbar/ToolBar';
+import FontBar from './FontBar';
+import LinkPopup from './LinkPopup';
 
 class WysiwygEditor extends React.Component {
   constructor(props) {
@@ -44,15 +46,18 @@ class WysiwygEditor extends React.Component {
       name,
       editorState,
       showFontBar: false,
+      showLinkPopup: false,
     };
 
     this.autoSaveHandle = null;
     this.saveContent = this.saveContent.bind(this);
     this.toggleFontBar = this.toggleFontBar.bind(this);
+    this.toggleLinkPopup = this.toggleLinkPopup.bind(this);
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleInlineStyle = this.handleInlineStyle.bind(this);
     this.handleBlockType = this.handleBlockType.bind(this);
+    this.handleClickBg = this.handleClickBg.bind(this);
   }
 
   componentDidMount() {
@@ -83,6 +88,10 @@ class WysiwygEditor extends React.Component {
 
   toggleFontBar() {
     this.setState({ showFontBar: !this.state.showFontBar });
+  }
+
+  toggleLinkPopup() {
+    this.setState({ showLinkPopup: !this.state.showLinkPopup });
   }
 
   handleKeyCommand(command, editorState) {
@@ -126,9 +135,17 @@ class WysiwygEditor extends React.Component {
     this.handleChange(RichUtils.toggleBlockType(this.state.editorState, type));
   }
 
+  handleClickBg(e) {
+    const { showFontBar } = this.state;
+
+    if (showFontBar) {
+      this.setState({ showFontBar: false });
+    }
+  }
+
   render() {
     const { placeholder } = this.props;
-    const { editorState, showFontBar } = this.state;
+    const { editorState, showFontBar, showLinkPopup } = this.state;
 
     const blockRenderMap = Immutable.Map({
       'unstyled': {
@@ -139,7 +156,7 @@ class WysiwygEditor extends React.Component {
      });
 
     return (
-      <div className="WysiwygEditor">
+      <div className="WysiwygEditor" onClick={this.handleClickBg}>
         <ToolBar className="top" show={true}>
           <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'BOLD'); }}>
             <Icon name="bold" />
@@ -150,32 +167,12 @@ class WysiwygEditor extends React.Component {
           <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'UNDERLINE'); }}>
             <Icon name="underlined" />
           </Button>
+          <ToolBar.Separator />
           <Button className="icon" onClick={this.toggleFontBar}>
             <Icon name="fontsize" />
-            <ToolBar className="FontBar float" show={showFontBar}>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-one'); }}>
-                <h1>h1</h1>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-two'); }}>
-                <h2>h2</h2>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-three'); }}>
-                <h3>h3</h3>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-four'); }}>
-                <h4>h4</h4>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-five'); }}>
-                <h5>h5</h5>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-six'); }}>
-                <h6>h6</h6>
-              </Button>
-              <Button onClick={(e)=>{ this.handleBlockType(e, 'unstyled'); }}>
-                <p>paragraph</p>
-              </Button>
-            </ToolBar>
+            <FontBar show={showFontBar} onClick={this.handleBlockType} />
           </Button>
+          <ToolBar.Separator />
           <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'blockquote'); }}>
             <Icon name="blockquote" />
           </Button>
@@ -188,6 +185,10 @@ class WysiwygEditor extends React.Component {
           <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'code-block'); }}>
             <Icon name="code" />
           </Button>
+          <ToolBar.Separator />
+          <Button className="icon" onClick={this.toggleLinkPopup}>
+            <Icon name="link" />
+          </Button>
         </ToolBar>
         <Editor
           ref={this.editor}
@@ -196,6 +197,10 @@ class WysiwygEditor extends React.Component {
           blockRenderMap={DefaultDraftBlockRenderMap.merge(blockRenderMap)}
           handleKeyCommand={this.handleKeyCommand}
           onChange={this.handleChange}
+        />
+        <LinkPopup
+          show={showLinkPopup}
+          onClose={this.toggleLinkPopup}
         />
       </div>
     );

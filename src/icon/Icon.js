@@ -9,6 +9,7 @@ import {
   MdFormatListNumbered,
   MdFormatQuote,
   MdFormatUnderlined,
+  MdLink,
   MdTextFields,
 } from 'react-icons/md';
 
@@ -39,6 +40,7 @@ Icon.icons = {
   underlined: MdFormatUnderlined,
   unorderedlist: MdFormatListBulleted,
   fontsize: MdTextFields,
+  link: MdLink,
 };
 
 Icon.propTypes = {

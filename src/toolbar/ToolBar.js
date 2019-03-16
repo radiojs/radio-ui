@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Separator from './Separator';
+
 class ToolBar extends React.Component {
 
   render() {
@@ -23,5 +25,7 @@ ToolBar.defaultProps = {
   className: '',
   show: false,
 };
+
+ToolBar.Separator = Separator;
 
 export default ToolBar;

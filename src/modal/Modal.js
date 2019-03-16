@@ -6,7 +6,6 @@ import Button from '../form/Button';
 import Icon from '../icon/Icon';
 
 class Modal extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -25,7 +24,7 @@ class Modal extends React.Component {
 
     return (
       <ReactModal
-        className={`Modal full ${className}`.trim()}
+        className={`Modal ${className}`.trim()}
         overlayClassName="ModalOverlay"
         isOpen={show}
         appElement={document.getElementById(appElementId)}
