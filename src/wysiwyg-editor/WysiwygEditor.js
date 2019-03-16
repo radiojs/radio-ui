@@ -10,7 +10,7 @@ import {
   EditorState,
   RichUtils,
 } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
+import { stateToHTML } from 'draft-js-export-html';
 import Immutable from 'immutable';
 
 import Button from '../form/Button';
@@ -23,6 +23,7 @@ class WysiwygEditor extends React.Component {
 
     this.editor = React.createRef();
 
+    // set initial values
     const { name, value } = props;
     let { contentBlocks, entityMap } = convertFromHTML(value);
     const contentState = contentBlocks ? 
@@ -39,16 +40,19 @@ class WysiwygEditor extends React.Component {
       });
     const editorState = EditorState.createWithContent(contentState); 
 
-    this.state = { name, editorState };
+    this.state = {
+      name,
+      editorState,
+      showFontBar: false,
+    };
 
     this.autoSaveHandle = null;
     this.saveContent = this.saveContent.bind(this);
+    this.toggleFontBar = this.toggleFontBar.bind(this);
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleActionBold = this.handleActionBold.bind(this);
-    this.handleActionItalic = this.handleActionItalic.bind(this);
-    this.handleActionUnderlined = this.handleActionUnderlined.bind(this);
-    this.handleActionBlockQuote = this.handleActionBlockQuote.bind(this);
+    this.handleInlineStyle = this.handleInlineStyle.bind(this);
+    this.handleBlockType = this.handleBlockType.bind(this);
   }
 
   componentDidMount() {
@@ -73,8 +77,12 @@ class WysiwygEditor extends React.Component {
       state.getCurrentContent() : editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
     const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
-    const content = draftToHtml(rawContentState);
+    const content = stateToHTML(contentState);
     onChange(name, { title, content });
+  }
+
+  toggleFontBar() {
+    this.setState({ showFontBar: !this.state.showFontBar });
   }
 
   handleKeyCommand(command, editorState) {
@@ -105,25 +113,22 @@ class WysiwygEditor extends React.Component {
     }
   }
 
-  handleActionBold() {
-    this.handleChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
+  /**
+   * 선택된 영역을 지정한 스타일로 변경한다.
+   * 
+   * @param {*} style : 'BOLD', 'ITALIC', 'UNDERLINE'
+   */
+  handleInlineStyle(e, style) {
+    this.handleChange(RichUtils.toggleInlineStyle(this.state.editorState, style));
   }
 
-  handleActionItalic() {
-    this.handleChange(RichUtils.toggleInlineStyle(this.state.editorState, 'ITALIC'));
-  }
-
-  handleActionUnderlined() {
-    this.handleChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'));
-  }
-
-  handleActionBlockQuote() {
-    // TODO
+  handleBlockType(e, type) {
+    this.handleChange(RichUtils.toggleBlockType(this.state.editorState, type));
   }
 
   render() {
     const { placeholder } = this.props;
-    const { editorState } = this.state;
+    const { editorState, showFontBar } = this.state;
 
     const blockRenderMap = Immutable.Map({
       'unstyled': {
@@ -135,6 +140,55 @@ class WysiwygEditor extends React.Component {
 
     return (
       <div className="WysiwygEditor">
+        <ToolBar className="top" show={true}>
+          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'BOLD'); }}>
+            <Icon name="bold" />
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'ITALIC'); }}>
+            <Icon name="italic" />
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'UNDERLINE'); }}>
+            <Icon name="underlined" />
+          </Button>
+          <Button className="icon" onClick={this.toggleFontBar}>
+            <Icon name="fontsize" />
+            <ToolBar className="FontBar float" show={showFontBar}>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-one'); }}>
+                <h1>h1</h1>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-two'); }}>
+                <h2>h2</h2>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-three'); }}>
+                <h3>h3</h3>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-four'); }}>
+                <h4>h4</h4>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-five'); }}>
+                <h5>h5</h5>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'header-six'); }}>
+                <h6>h6</h6>
+              </Button>
+              <Button onClick={(e)=>{ this.handleBlockType(e, 'unstyled'); }}>
+                <p>paragraph</p>
+              </Button>
+            </ToolBar>
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'blockquote'); }}>
+            <Icon name="blockquote" />
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'unordered-list-item'); }}>
+            <Icon name="unorderedlist" />
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'ordered-list-item'); }}>
+            <Icon name="orderedlist" />
+          </Button>
+          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'code-block'); }}>
+            <Icon name="code" />
+          </Button>
+        </ToolBar>
         <Editor
           ref={this.editor}
           editorState={editorState}
@@ -143,20 +197,6 @@ class WysiwygEditor extends React.Component {
           handleKeyCommand={this.handleKeyCommand}
           onChange={this.handleChange}
         />
-        <ToolBar show={true}>
-          <Button className="icon" onClick={this.handleActionBold}>
-            <Icon name="bold" />
-          </Button>
-          <Button className="icon" onClick={this.handleActionItalic}>
-            <Icon name="italic" />
-          </Button>
-          <Button className="icon" onClick={this.handleActionUnderlined}>
-            <Icon name="underlined" />
-          </Button>
-          <Button className="icon" onClick={this.handleActionBlockQuote}>
-            <Icon name="blockquote" />
-          </Button>
-        </ToolBar>
       </div>
     );
   }

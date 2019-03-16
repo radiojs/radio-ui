@@ -2,9 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   MdClear,
+  MdCode,
   MdFormatBold,
   MdFormatItalic,
+  MdFormatListBulleted,
+  MdFormatListNumbered,
+  MdFormatQuote,
   MdFormatUnderlined,
+  MdTextFields,
 } from 'react-icons/md';
 
 class Icon extends React.Component {
@@ -26,9 +31,14 @@ class Icon extends React.Component {
 
 Icon.icons = { 
   close: MdClear,
+  code: MdCode,
+  blockquote: MdFormatQuote,
   bold: MdFormatBold,
   italic: MdFormatItalic,
+  orderedlist: MdFormatListNumbered,
   underlined: MdFormatUnderlined,
+  unorderedlist: MdFormatListBulleted,
+  fontsize: MdTextFields,
 };
 
 Icon.propTypes = {

@@ -4,21 +4,23 @@ import PropTypes from 'prop-types';
 class ToolBar extends React.Component {
 
   render() {
-    const { show, children } = this.props;
+    const { className, show, children } = this.props;
 
     if (!show) return null;
 
     return (
-      <div className="ToolBar">{children}</div>
+      <div className={`ToolBar ${className}`.trim()}>{children}</div>
     )
   }
 }
 
 ToolBar.propTypes = {
+  className: PropTypes.string,
   show: PropTypes.bool,
 };
 
 ToolBar.defaultProps = {
+  className: '',
   show: false,
 };
 

@@ -2,6 +2,18 @@
     position: relative;
     background: transparent;
 
+    .FontBar {
+        .Button {
+            display: block;
+            height: auto;
+
+            h1, h2, h3, h4, h5, h6, p {
+                margin: 0;
+                text-align: left;
+            }
+        }
+    }
+
     .DraftEditor-root {
         h1, h2, h3, h4, h5, h6, p, .public-DraftStyleDefault-block {
             margin: 0;

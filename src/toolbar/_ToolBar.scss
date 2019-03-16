@@ -1,7 +1,18 @@
 .ToolBar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    border: solid 1px $colorBorder;
-    border-radius: $borderRadius;
+    position: relative;
+
+    &.top {
+        border: none;
+        border-bottom: dotted 1px $colorBorder;
+        border-radius: none;
+    }
+
+    &.float {
+        position: absolute;
+        top: $buttonHeight;
+        left: 0;
+        border: solid 1px $colorBorder;
+        border-radius: $borderRadius;
+        background: $colorBg;
+    }
 }

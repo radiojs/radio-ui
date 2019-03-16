@@ -31,7 +31,8 @@ const commonjsOptions = {
       "Editor",
       "EditorState",
       "RichUtils"
-    ]
+    ],
+    "draft-js-export-html/lib/main.js": ["stateToHTML"],
   }
 };
 
