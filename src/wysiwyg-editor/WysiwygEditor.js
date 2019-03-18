@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  AtomicBlockUtils,
+  CompositeDecorator,
   ContentState,
   convertFromHTML,
   convertFromRaw,
@@ -16,14 +18,44 @@ import Immutable from 'immutable';
 import Button from '../form/Button';
 import Icon from '../icon/Icon';
 import ToolBar from '../toolbar/ToolBar';
-import FontBar from './FontBar';
+import ActionBar from './ActionBar';
 import LinkPopup from './LinkPopup';
+import ImagePopup from './ImagePopup';
 
 class WysiwygEditor extends React.Component {
   constructor(props) {
     super(props);
 
     this.editor = React.createRef();
+
+    const decorator = new CompositeDecorator([
+      {
+        component: ({ contentState, entityKey, children }) => {
+          const { url } = contentState.getEntity(entityKey).getData();
+          return (<a href={url}>{children}</a>);
+        },
+        strategy: (contentBlock, callback, contentState) => {
+          contentBlock.findEntityRanges((character) => {
+            const entityKey = character.getEntity();
+            return (entityKey !== null &&
+              contentState.getEntity(entityKey).getType() === 'LINK');
+          }, callback);
+        },
+      },
+      {
+        component: ({ contentState, entityKey }) => {
+          const { src } = contentState.getEntity(entityKey).getData();
+          return (<img src={src} />);
+        },
+        strategy: (contentBlock, callback, contentState) => {
+          contentBlock.findEntityRanges((character) => {
+            const entityKey = character.getEntity();
+            return (entityKey !== null &&
+              contentState.getEntity(entityKey).getType() === 'IMAGE');
+          }, callback);
+        },
+      },
+    ]);
 
     // set initial values
     const { name, value } = props;
@@ -40,24 +72,28 @@ class WysiwygEditor extends React.Component {
         }],
         entityMap: {},
       });
-    const editorState = EditorState.createWithContent(contentState); 
+    const editorState = EditorState.createWithContent(contentState, decorator); 
 
     this.state = {
       name,
       editorState,
-      showFontBar: false,
+      linkUrl: null,
+      imageUrl: null,
       showLinkPopup: false,
+      showImagePopup: false,
     };
 
     this.autoSaveHandle = null;
     this.saveContent = this.saveContent.bind(this);
-    this.toggleFontBar = this.toggleFontBar.bind(this);
     this.toggleLinkPopup = this.toggleLinkPopup.bind(this);
+    this.toggleImagePopup = this.toggleImagePopup.bind(this);
+    this.addVideoPopup = this.addVideoPopup.bind(this);
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleInlineStyle = this.handleInlineStyle.bind(this);
     this.handleBlockType = this.handleBlockType.bind(this);
-    this.handleClickBg = this.handleClickBg.bind(this);
+    this.handleLinkUrl = this.handleLinkUrl.bind(this);
+    this.handleImageUrl = this.handleImageUrl.bind(this);
   }
 
   componentDidMount() {
@@ -81,17 +117,51 @@ class WysiwygEditor extends React.Component {
     const contentState = state ?
       state.getCurrentContent() : editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
+
     const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
     const content = stateToHTML(contentState);
     onChange(name, { title, content });
   }
 
-  toggleFontBar() {
-    this.setState({ showFontBar: !this.state.showFontBar });
+  toggleLinkPopup() {
+    const { editorState } = this.state;
+    const selection = editorState.getSelection();
+
+    // get Link URL on the current selection or on the caret position
+    let linkUrl = null;
+    if (selection.isCollapsed()) {
+
+    } else {
+      const contentState = editorState.getCurrentContent();
+      const startKey = editorState.getSelection().getStartKey();
+      const startOffset = editorState.getSelection().getStartOffset();
+      const blockWithLinkAtBeginning = contentState.getBlockForKey(startKey);
+      const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset);
+      if (linkKey) {
+        const linkInstance = contentState.getEntity(linkKey);
+        linkUrl = linkInstance.getData().url;
+      }
+    }
+
+    if (selection.isCollapsed() && !linkUrl) {
+      console.log('no selected text');
+      return;
+    } else {
+      this.setState({
+        linkUrl,
+        showLinkPopup: !this.state.showLinkPopup,
+      });
+    }
   }
 
-  toggleLinkPopup() {
-    this.setState({ showLinkPopup: !this.state.showLinkPopup });
+  toggleImagePopup() {
+    this.setState({
+      showImagePopup: !this.state.showImagePopup,
+    });
+  }
+
+  addVideoPopup() {
+
   }
 
   handleKeyCommand(command, editorState) {
@@ -135,17 +205,85 @@ class WysiwygEditor extends React.Component {
     this.handleChange(RichUtils.toggleBlockType(this.state.editorState, type));
   }
 
-  handleClickBg(e) {
-    const { showFontBar } = this.state;
+  /**
+   * 링크를 삽입하거나 기존에 존재하는 링크를 삭제한다.
+   * 삽입하는 경우는, url 값을 받아서 선택된 영역을 <a href="..."></a> 태그로 감싼다.
+   * 
+   * @param {*} url 
+   */
+  handleLinkUrl(url) {
+    const { editorState } = this.state;
+    const contentState = editorState.getCurrentContent();
 
-    if (showFontBar) {
-      this.setState({ showFontBar: false });
+    if (url) {
+      const contentStateWithEntity = contentState.createEntity(
+        'LINK',
+        'MUTABLE',
+        { url },
+      );
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+      const newEditorState = EditorState.set(editorState, {
+        currentContent: contentStateWithEntity,
+      });
+      const editorStateUpdated = RichUtils.toggleLink(
+        newEditorState,
+        newEditorState.getSelection(),
+        entityKey
+      );
+
+      this.setState({
+        editorState: editorStateUpdated,
+        linkUrl: null,
+        showLinkPopup: false,
+      }, () => {
+        setTimeout(() => this.editor.current.focus(), 0);
+      });
+    } else {
+
+    }
+  }
+
+  handleImageUrl(url) {
+    const { editorState } = this.state;
+    const contentState = editorState.getCurrentContent();
+
+    if (url) {
+      const contentStateWithEntity = contentState.createEntity(
+        'IMAGE',
+        'MUTABLE',
+        { src: url },
+      );
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+      const newEditorState = EditorState.set(editorState, {
+        currentContent: contentStateWithEntity,
+      });
+      const editorStateUpdated = AtomicBlockUtils.insertAtomicBlock(
+        newEditorState,
+        entityKey,
+        ' ',
+      );
+
+      this.setState({
+        editorState: editorStateUpdated,
+        imageUrl: null,
+        showImagePopup: false,
+      }, () => {
+        setTimeout(() => this.editor.current.focus(), 0);
+      });
+    } else {
+
     }
   }
 
   render() {
     const { placeholder } = this.props;
-    const { editorState, showFontBar, showLinkPopup } = this.state;
+    const {
+      editorState,
+      linkUrl,
+      imageUrl,
+      showLinkPopup,
+      showImagePopup,
+    } = this.state;
 
     const blockRenderMap = Immutable.Map({
       'unstyled': {
@@ -156,40 +294,14 @@ class WysiwygEditor extends React.Component {
      });
 
     return (
-      <div className="WysiwygEditor" onClick={this.handleClickBg}>
-        <ToolBar className="top" show={true}>
-          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'BOLD'); }}>
-            <Icon name="bold" />
-          </Button>
-          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'ITALIC'); }}>
-            <Icon name="italic" />
-          </Button>
-          <Button className="icon" onClick={(e)=>{ this.handleInlineStyle(e, 'UNDERLINE'); }}>
-            <Icon name="underlined" />
-          </Button>
-          <ToolBar.Separator />
-          <Button className="icon" onClick={this.toggleFontBar}>
-            <Icon name="fontsize" />
-            <FontBar show={showFontBar} onClick={this.handleBlockType} />
-          </Button>
-          <ToolBar.Separator />
-          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'blockquote'); }}>
-            <Icon name="blockquote" />
-          </Button>
-          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'unordered-list-item'); }}>
-            <Icon name="unorderedlist" />
-          </Button>
-          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'ordered-list-item'); }}>
-            <Icon name="orderedlist" />
-          </Button>
-          <Button className="icon" onClick={(e)=>{ this.handleBlockType(e, 'code-block'); }}>
-            <Icon name="code" />
-          </Button>
-          <ToolBar.Separator />
-          <Button className="icon" onClick={this.toggleLinkPopup}>
-            <Icon name="link" />
-          </Button>
-        </ToolBar>
+      <div className="WysiwygEditor">
+        <ActionBar
+          onInlineStyle={this.handleInlineStyle}
+          onBlockType={this.handleBlockType}
+          onLinkPopup={this.toggleLinkPopup}
+          onImagePopup={this.toggleImagePopup}
+          onVideoPopup={this.addVideoPopup}
+        />
         <Editor
           ref={this.editor}
           editorState={editorState}
@@ -200,7 +312,15 @@ class WysiwygEditor extends React.Component {
         />
         <LinkPopup
           show={showLinkPopup}
+          value={linkUrl}
+          onSubmit={this.handleLinkUrl}
           onClose={this.toggleLinkPopup}
+        />
+        <ImagePopup
+          show={showImagePopup}
+          value={imageUrl}
+          onSubmit={this.handleImageUrl}
+          onClose={this.toggleImagePopup}
         />
       </div>
     );

@@ -6,7 +6,7 @@ import Form from '../form/Form';
 import Input from '../form/Input';
 import Modal from '../modal/Modal';
 
-class LinkPopup extends React.Component {
+class ImagePopup extends React.Component {
   constructor(props) {
     super(props);
 
@@ -62,7 +62,7 @@ class LinkPopup extends React.Component {
   }
 }
 
-LinkPopup.propTypes = {
+ImagePopup.propTypes = {
   show: PropTypes.bool,
   value: PropTypes.string,
   guideMessage: PropTypes.string,
@@ -71,9 +71,9 @@ LinkPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-LinkPopup.defaultProps = {
+ImagePopup.defaultProps = {
   show: false,
-  guideMessage: 'Input Link URL',
+  guideMessage: 'Input Image URL',
 };
 
-export default LinkPopup;
+export default ImagePopup;

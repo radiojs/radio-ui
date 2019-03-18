@@ -9,8 +9,10 @@ import {
   MdFormatListNumbered,
   MdFormatQuote,
   MdFormatUnderlined,
+  MdImage,
   MdLink,
   MdTextFields,
+  MdVideocam,
 } from 'react-icons/md';
 
 class Icon extends React.Component {
@@ -41,6 +43,8 @@ Icon.icons = {
   unorderedlist: MdFormatListBulleted,
   fontsize: MdTextFields,
   link: MdLink,
+  image: MdImage,
+  video: MdVideocam,
 };
 
 Icon.propTypes = {

@@ -23,6 +23,8 @@ const commonjsOptions = {
   namedExports: {
     "prop-types": ["object", "oneOfType", "element", "bool", "func"],
     "draft-js/lib/Draft.js": [
+      "AtomicBlockUtils",
+      "CompositeDecorator",
       "ContentState",
       "convertFromHTML",
       "convertFromRaw",

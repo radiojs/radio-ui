@@ -4,11 +4,37 @@ import PropTypes from 'prop-types';
 import ToolBar from '../toolbar/ToolBar';
 
 class FontBar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.toolbar = React.createRef();
+
+    this.handleClickOutside = this.handleClickOutside.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
+  
+  handleClickOutside(e) {
+    if (this.toolbar.current && !this.toolbar.current.contains(e.target)) {
+      this.props.onClose();
+    }
+  }
+
   render() {
     const { show, onClick } = this.props;
-
+    
     return (
-      <ToolBar className="FontBar float" show={show}>
+      <ToolBar
+        ref={this.toolbar}
+        className="FontBar float"
+        show={show}
+      >
         <div className="link" onClick={(e)=>{ onClick(e, 'header-one'); }}>
           <h1>h1</h1>
         </div>
@@ -38,6 +64,7 @@ class FontBar extends React.Component {
 FontBar.propTypes = {
   show: PropTypes.bool,
   onClick: PropTypes.func,
+  onClose: PropTypes.func,
 };
 
 FontBar.defaultProps = {
