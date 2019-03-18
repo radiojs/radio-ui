@@ -15,12 +15,10 @@ import {
 import { stateToHTML } from 'draft-js-export-html';
 import Immutable from 'immutable';
 
-import Button from '../form/Button';
-import Icon from '../icon/Icon';
-import ToolBar from '../toolbar/ToolBar';
 import ActionBar from './ActionBar';
 import LinkPopup from './LinkPopup';
 import ImagePopup from './ImagePopup';
+import VideoPopup from './VideoPopup';
 
 class WysiwygEditor extends React.Component {
   constructor(props) {
@@ -55,6 +53,19 @@ class WysiwygEditor extends React.Component {
           }, callback);
         },
       },
+      {
+        component: ({ contentState, entityKey }) => {
+          const { src } = contentState.getEntity(entityKey).getData();
+          return (<video controls src={src} />);
+        },
+        strategy: (contentBlock, callback, contentState) => {
+          contentBlock.findEntityRanges((character) => {
+            const entityKey = character.getEntity();
+            return (entityKey !== null &&
+              contentState.getEntity(entityKey).getType() === 'VIDEO');
+          }, callback);
+        },
+      },
     ]);
 
     // set initial values
@@ -79,21 +90,24 @@ class WysiwygEditor extends React.Component {
       editorState,
       linkUrl: null,
       imageUrl: null,
+      videoUrl: null,
       showLinkPopup: false,
       showImagePopup: false,
+      showVideoPopup: false,
     };
 
     this.autoSaveHandle = null;
     this.saveContent = this.saveContent.bind(this);
     this.toggleLinkPopup = this.toggleLinkPopup.bind(this);
     this.toggleImagePopup = this.toggleImagePopup.bind(this);
-    this.addVideoPopup = this.addVideoPopup.bind(this);
+    this.toggleVideoPopup = this.toggleVideoPopup.bind(this);
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleInlineStyle = this.handleInlineStyle.bind(this);
     this.handleBlockType = this.handleBlockType.bind(this);
     this.handleLinkUrl = this.handleLinkUrl.bind(this);
     this.handleImageUrl = this.handleImageUrl.bind(this);
+    this.handleVideoUrl = this.handleVideoUrl.bind(this);
   }
 
   componentDidMount() {
@@ -160,8 +174,10 @@ class WysiwygEditor extends React.Component {
     });
   }
 
-  addVideoPopup() {
-
+  toggleVideoPopup() {
+    this.setState({
+      showVideoPopup: !this.state.showVideoPopup,
+    });
   }
 
   handleKeyCommand(command, editorState) {
@@ -275,14 +291,48 @@ class WysiwygEditor extends React.Component {
     }
   }
 
+  handleVideoUrl(url) {
+    const { editorState } = this.state;
+    const contentState = editorState.getCurrentContent();
+
+    if (url) {
+      const contentStateWithEntity = contentState.createEntity(
+        'VIDEO',
+        'MUTABLE',
+        { src: url },
+      );
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+      const newEditorState = EditorState.set(editorState, {
+        currentContent: contentStateWithEntity,
+      });
+      const editorStateUpdated = AtomicBlockUtils.insertAtomicBlock(
+        newEditorState,
+        entityKey,
+        ' ',
+      );
+
+      this.setState({
+        editorState: editorStateUpdated,
+        videoUrl: null,
+        showVideoPopup: false,
+      }, () => {
+        setTimeout(() => this.editor.current.focus(), 0);
+      });
+    } else {
+
+    }
+  }
+
   render() {
     const { placeholder } = this.props;
     const {
       editorState,
       linkUrl,
       imageUrl,
+      videoUrl,
       showLinkPopup,
       showImagePopup,
+      showVideoPopup,
     } = this.state;
 
     const blockRenderMap = Immutable.Map({
@@ -300,7 +350,7 @@ class WysiwygEditor extends React.Component {
           onBlockType={this.handleBlockType}
           onLinkPopup={this.toggleLinkPopup}
           onImagePopup={this.toggleImagePopup}
-          onVideoPopup={this.addVideoPopup}
+          onVideoPopup={this.toggleVideoPopup}
         />
         <Editor
           ref={this.editor}
@@ -321,6 +371,12 @@ class WysiwygEditor extends React.Component {
           value={imageUrl}
           onSubmit={this.handleImageUrl}
           onClose={this.toggleImagePopup}
+        />
+        <VideoPopup
+          show={showVideoPopup}
+          value={videoUrl}
+          onSubmit={this.handleVideoUrl}
+          onClose={this.toggleVideoPopup}
         />
       </div>
     );
