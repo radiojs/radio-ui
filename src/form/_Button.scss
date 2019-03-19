@@ -13,6 +13,11 @@
   text-decoration: none;
   cursor: pointer;
 
+  .fa-spin {
+    display: none;
+    margin-right: 10px;
+  }
+
   &.large {
     height: $buttonHeightLarge;
     padding: 12px 24px;
@@ -34,10 +39,30 @@
     outline: 0;
   }
 
+  &:disabled {
+    border-color: lighten($color: $colorGray, $amount: 10%);
+    background: lighten($color: $colorGray, $amount: 10%);
+    color: $colorLightGray;
+
+    .fa-spin {
+      display: inline-block;
+    }
+  }
+
   &.primary {
     border-color: $colorPrimary;
     background: $colorPrimary;
     color: $colorWhite;
+
+    &:disabled {
+      border-color: lighten($color: $colorPrimary, $amount: 10%);
+      background: lighten($color: $colorPrimary, $amount: 10%);
+      color: $colorGray;
+
+      .fa-spin {
+        display: inline-block;
+      }
+    }
   }
 
   &.block {
