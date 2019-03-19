@@ -32,7 +32,7 @@ class ActionBar extends React.Component {
     const { showFontBar } = this.state;
 
     return (
-      <ToolBar className="top" show={true}>
+      <ToolBar className="ActionBar top" show={true}>
         <Button className="icon" onClick={(e)=>{ onInlineStyle(e, 'BOLD'); }}>
           <Icon name="bold" />
         </Button>
@@ -41,6 +41,9 @@ class ActionBar extends React.Component {
         </Button>
         <Button className="icon" onClick={(e)=>{ onInlineStyle(e, 'UNDERLINE'); }}>
           <Icon name="underlined" />
+        </Button>
+        <Button className="icon" onClick={(e)=>{ onInlineStyle(e, 'CODE'); }}>
+          <Icon name="code" />
         </Button>
         <ToolBar.Separator />
         <Button className="icon" onClick={this.toggleFontBar}>
@@ -71,9 +74,11 @@ class ActionBar extends React.Component {
         <Button className="icon" onClick={onImagePopup}>
           <Icon name="image" />
         </Button>
+        {/*
         <Button className="icon" onClick={onVideoPopup}>
           <Icon name="video" />
         </Button>
+        */}
       </ToolBar>
     );
   }

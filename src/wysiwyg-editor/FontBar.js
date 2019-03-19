@@ -36,16 +36,16 @@ class FontBar extends React.Component {
         show={show}
       >
         <div className="link" onClick={(e)=>{ onClick(e, 'header-one'); }}>
-          <h1>h1</h1>
+          <h1>H1</h1>
         </div>
         <div className="link" onClick={(e)=>{ onClick(e, 'header-two'); }}>
-          <h2>h2</h2>
+          <h2>H2</h2>
         </div>
         <div className="link" onClick={(e)=>{ onClick(e, 'header-three'); }}>
-          <h3>h3</h3>
+          <h3>H3</h3>
         </div>
         <div className="link" onClick={(e)=>{ onClick(e, 'header-four'); }}>
-          <h4>h4</h4>
+          <h4>H4</h4>
         </div>
         <div className="link" onClick={(e)=>{ onClick(e, 'header-five'); }}>
           <h5>h5</h5>

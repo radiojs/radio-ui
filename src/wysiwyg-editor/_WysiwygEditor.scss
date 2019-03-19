@@ -1,20 +1,53 @@
 .WysiwygEditor {
-    position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
     background: transparent;
 
-    .FontBar {
-        h1, h2, h3, h4, h5, h6, p {
-            margin: 0;
-            text-align: left;
-        }
-    }
-
     .DraftEditor-root {
+        position: absolute;
+        top: calc(#{$toolbarHeight} + 2px);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: auto;
+        padding: 10px;
+
         h1, h2, h3, h4, h5, h6, p, .public-DraftStyleDefault-block {
             margin: 0;
             line-height: 2em;
         }
 
+        h1 {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        h3 {
+            font-size: 1.17em;
+            font-weight: bold;
+        }
+        h4 {
+            font-size: 1em;
+            font-weight: bold;
+        }
+        h5 {
+            font-size: .83em;
+            font-weight: bold;
+        }
+        h6 {
+            font-size: .67em;
+            font-weight: bold;
+        }
+        p, .public-DraftStyleDefault-block {
+            font-size: 1em;
+        }
         img {
             width: 100%;
         }
@@ -28,4 +61,28 @@
         font-size: 1.6em;
         pointer-events: none;
     }
+
+    .ActionBar {
+        height: $toolbarHeight;
+        margin-top: 1px;
+        
+        .FontBar {
+            background: $colorWhite;
+
+            .link {
+                padding: 5px;
+                font-size: initial;
+            }
+
+            h1, h2, h3, h4, h5, h6, p {
+                margin: 0;
+                text-align: left;
+            }
+
+            .link + .link {
+                border-top: solid 1px $colorBorder;
+            }
+        }
+    }
+
 }

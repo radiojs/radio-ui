@@ -134,6 +134,7 @@ class WysiwygEditor extends React.Component {
 
     const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
     const content = stateToHTML(contentState);
+
     onChange(name, { title, content });
   }
 
@@ -345,13 +346,6 @@ class WysiwygEditor extends React.Component {
 
     return (
       <div className="WysiwygEditor">
-        <ActionBar
-          onInlineStyle={this.handleInlineStyle}
-          onBlockType={this.handleBlockType}
-          onLinkPopup={this.toggleLinkPopup}
-          onImagePopup={this.toggleImagePopup}
-          onVideoPopup={this.toggleVideoPopup}
-        />
         <Editor
           ref={this.editor}
           editorState={editorState}
@@ -359,6 +353,13 @@ class WysiwygEditor extends React.Component {
           blockRenderMap={DefaultDraftBlockRenderMap.merge(blockRenderMap)}
           handleKeyCommand={this.handleKeyCommand}
           onChange={this.handleChange}
+        />
+        <ActionBar
+          onInlineStyle={this.handleInlineStyle}
+          onBlockType={this.handleBlockType}
+          onLinkPopup={this.toggleLinkPopup}
+          onImagePopup={this.toggleImagePopup}
+          onVideoPopup={this.toggleVideoPopup}
         />
         <LinkPopup
           show={showLinkPopup}
