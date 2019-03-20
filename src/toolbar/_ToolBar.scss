@@ -3,8 +3,9 @@
 
     &.top {
         border: none;
-        border-bottom: dotted 1px $colorBorder;
+        // border-bottom: solid 1px $colorBorder;
         border-radius: none;
+        box-shadow: 0 0 5px 1px lighten($color: $colorGray, $amount: 5%);
 
         .Separator {
             display: inline-block;
@@ -21,9 +22,10 @@
     &.float {
         position: absolute;
         top: $buttonHeight;
-        left: 0;
+        left: -5px;
         border: solid 1px $colorBorder;
-        border-radius: $borderRadius;
+        // border-radius: $borderRadius;
         background: $colorBg;
+        box-shadow: 0 3px 5px 1px lighten($color: $colorGray, $amount: 5%);
     }
 }

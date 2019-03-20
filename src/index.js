@@ -21,6 +21,8 @@ import Spinner from './spinner/Spinner';
 
 import TextEditor from './text-editor/TextEditor';
 
+import Toast from './toast/Toast';
+
 import ToolBar from './toolbar/ToolBar';
 
 import WysiwygEditor from './wysiwyg-editor/WysiwygEditor';
@@ -41,6 +43,7 @@ export {
   Spinner,
   TextArea,
   TextEditor,
+  Toast,
   ToolBar,
   WysiwygEditor,
 };
