@@ -1,6 +1,37 @@
 .Toast {
-    width: $toastWidth;
-    height: $toastHeight;
+    position: relative;
+    width: 100%;
+    max-width: $toastWidthMax;
     padding: 10px;
     border: solid 1px $colorBorder;
+    border-radius: $borderRadius;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 5px 1px $colorGray;
+
+    .Icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $colorBlue;
+    }
+
+    p {
+        margin: 0 30px 0 0;
+        line-height: 1.3em;
+    }
+
+    .Icon + p {
+        margin-left: 30px;
+    }
+
+    .Button.close {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+        padding: 6px;
+        border: none;
+        background: transparent;
+        font-size: 18px;
+    }
 }    

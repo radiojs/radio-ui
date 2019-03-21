@@ -14,15 +14,15 @@ class Toast extends React.Component {
   }
 
   render() {
-    const { _id, message, icon, close, children, onClose } = this.props;
+    const { className, _id, message, icon, close, children, onClose } = this.props;
 
     return (
-      <div className="Toast">
-        {icon && <Icon name={icon} />}
+      <div className={`Toast ${className}`.trim()}>
+        {icon && <Icon className="Icon" name={icon} />}
         {message && <p>{message}</p>}
         {children}
         {close && (
-          <Button onClick={() => { onClose(_id); }}>
+          <Button className="icon close" onClick={() => { onClose(_id); }}>
             <Icon name="close" />
           </Button>
         )}
@@ -32,6 +32,7 @@ class Toast extends React.Component {
 }
 
 Toast.propTypes = {
+  className: PropTypes.string,
   icon: PropTypes.string,
   message: PropTypes.string,
   close: PropTypes.bool,
@@ -40,7 +41,8 @@ Toast.propTypes = {
 };
 
 Toast.defaultProps = {
-  close: false,
+  className: '',
+  close: true,
   closeAt: 3000,
 };
 

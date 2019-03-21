@@ -2,8 +2,7 @@ $headerHeight:          50px !default;
 $sidebarWidthFixed:     240px !default;
 $pageWidthMax:          960px !default;
 
-$toastWidth:            300px;
-$toastHeight:           32px;
+$toastWidthMax:         400px;
 
 $buttonHeight:          40px !default;
 $buttonHeightLarge:     48px !default;
@@ -15,7 +14,7 @@ $zIndexSidebar:         1000 !default;
 $zIndexHeader:          1010 !default;
 
 $colorRed:              #f00 !default;
-$colorGray:             #ccc !default;
+$colorGray:             #999 !default;
 $colorDarkGray:         #444 !default;
 $colorLightGray:        #eee !default;
 $colorWhite:            #fff !default;
