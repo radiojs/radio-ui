@@ -10,8 +10,8 @@
     "gzipped": 54403
   },
   "dist/radio-ui.js": {
-    "bundled": 1618141,
-    "minified": 545029,
-    "gzipped": 149716
+    "bundled": 1605272,
+    "minified": 525136,
+    "gzipped": 146662
   }
 }
