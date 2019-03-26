@@ -10,12 +10,14 @@ React UI components
 ## Components
 
 - Box
-- Form
+- Form: Button, CheckBox, Form, Input, Radio, TextArea
 - Icon
 - List
-- Message
+- Message: ErrorMessages
+- Modal: Alert, Confirm, Modal
 - Spinner
 - TextEditor
 - Toast
+- ToolBar
 - WysiwygEditor
 
