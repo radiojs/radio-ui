@@ -19,6 +19,8 @@ import Modal from './modal/Modal';
 
 import Spinner from './spinner/Spinner';
 
+import Tabs from './tab/Tabs';
+
 import TextEditor from './text-editor/TextEditor';
 
 import Toast from './toast/Toast';
@@ -41,6 +43,7 @@ export {
   Modal,
   Radio,
   Spinner,
+  Tabs,
   TextArea,
   TextEditor,
   Toast,

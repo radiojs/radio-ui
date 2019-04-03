@@ -1,0 +1,34 @@
+.Tabs {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+
+    .Tab {
+        display: inline-block;
+        flex: 1 1 auto;
+        padding: 10px;
+        border-bottom: solid 2px transparent;
+        background: darken($color: $colorBg, $amount: 5%);
+        color: $colorDarkGray;
+        text-align: center;
+        cursor: pointer;
+
+        &.active {
+            border-color: $colorRed;
+            background: $colorBg;
+            color: $colorText;
+        }
+    }
+
+    .Tab + .Tab {
+        margin-left: 2px;
+    }
+}
+
+.TabContainer {
+    display: none;
+
+    &.active {
+        display: block;
+    }
+}
