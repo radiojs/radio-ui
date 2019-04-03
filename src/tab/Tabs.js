@@ -28,7 +28,7 @@ class Tabs extends React.Component {
     });
 
     this.setState({ tabs: updated });
-    onChange(id);
+    onChange && onChange(id);
   }
 
   render() {

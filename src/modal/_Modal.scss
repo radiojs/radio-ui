@@ -9,7 +9,7 @@
 
 .Modal {
   position: absolute;
-  width: 300px;
+  width: 600px;
   min-width: 300px;
   min-height: 200px;
   left: 50%;
@@ -21,7 +21,22 @@
   -webkit-overflow-scrolling: touch;
 
   > header {
+    position: relative;
     height: $headerHeight;
+    border-radius: $borderRadius;
+    background: $colorLightGray;
+
+    .title {
+      padding: 0 10px;
+      line-height: $headerHeight;
+    }
+
+    .right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 5px;
+    }
   }
 
   > main {
@@ -101,4 +116,10 @@
 
 .ReactModal__Overlay--before-close{
   opacity: 0;
+}
+
+@media only screen and (max-width: 768px) {
+  .Modal {
+    width: 100%;
+  }
 }

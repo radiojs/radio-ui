@@ -325,7 +325,7 @@ class WysiwygEditor extends React.Component {
   }
 
   render() {
-    const { placeholder } = this.props;
+    const { placeholder, ImageUpload } = this.props;
     const {
       editorState,
       linkUrl,
@@ -370,6 +370,7 @@ class WysiwygEditor extends React.Component {
         <ImagePopup
           show={showImagePopup}
           value={imageUrl}
+          Upload={ImageUpload}
           onSubmit={this.handleImageUrl}
           onClose={this.toggleImagePopup}
         />
@@ -390,6 +391,7 @@ WysiwygEditor.propTypes = {
   placeholder: PropTypes.string,
   autoFocus: PropTypes.bool,
   autoSave: PropTypes.number,
+  imageUploadCallback: PropTypes.func,
 };
 
 WysiwygEditor.defaultProps = {

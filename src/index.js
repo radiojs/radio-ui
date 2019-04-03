@@ -2,6 +2,7 @@ import Box from './box/Box';
 
 import Button from './form/Button';
 import CheckBox from './form/CheckBox';
+import FileButton from './form/FileButton';
 import Form from './form/Form';
 import Input from './form/Input';
 import Radio from './form/Radio';
@@ -36,6 +37,7 @@ export {
   CheckBox,
   Confirm,
   ErrorMessages,
+  FileButton,
   Form,
   Icon,
   Input,
