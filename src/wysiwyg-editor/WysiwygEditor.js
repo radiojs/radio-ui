@@ -2,9 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   AtomicBlockUtils,
-  CompositeDecorator,
-  ContentState,
-  convertFromHTML,
   convertFromRaw,
   convertToRaw,
   DefaultDraftBlockRenderMap,
@@ -14,10 +11,11 @@ import {
 } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
 import Immutable from 'immutable';
+import _ from 'lodash';
 
+import EntityMappers from './EntityMappers';
 import ActionBar from './ActionBar';
 import LinkPopup from './LinkPopup';
-import ImagePopup from './ImagePopup';
 import VideoPopup from './VideoPopup';
 
 class WysiwygEditor extends React.Component {
@@ -26,71 +24,37 @@ class WysiwygEditor extends React.Component {
 
     this.editor = React.createRef();
 
-    const decorator = new CompositeDecorator([
-      {
-        component: ({ contentState, entityKey, children }) => {
-          const { url } = contentState.getEntity(entityKey).getData();
-          return (<a href={url}>{children}</a>);
-        },
-        strategy: (contentBlock, callback, contentState) => {
-          contentBlock.findEntityRanges((character) => {
-            const entityKey = character.getEntity();
-            return (entityKey !== null &&
-              contentState.getEntity(entityKey).getType() === 'LINK');
-          }, callback);
-        },
-      },
-      {
-        component: ({ contentState, entityKey }) => {
-          const { src } = contentState.getEntity(entityKey).getData();
-          return (<img src={src} />);
-        },
-        strategy: (contentBlock, callback, contentState) => {
-          contentBlock.findEntityRanges((character) => {
-            const entityKey = character.getEntity();
-            return (entityKey !== null &&
-              contentState.getEntity(entityKey).getType() === 'IMAGE');
-          }, callback);
-        },
-      },
-      {
-        component: ({ contentState, entityKey }) => {
-          const { src } = contentState.getEntity(entityKey).getData();
-          return (<video controls src={src} />);
-        },
-        strategy: (contentBlock, callback, contentState) => {
-          contentBlock.findEntityRanges((character) => {
-            const entityKey = character.getEntity();
-            return (entityKey !== null &&
-              contentState.getEntity(entityKey).getType() === 'VIDEO');
-          }, callback);
-        },
-      },
-    ]);
-
     // set initial values
     const { name, value } = props;
-    let { contentBlocks, entityMap } = convertFromHTML(value);
-    const contentState = contentBlocks ? 
-      ContentState.createFromBlockArray(contentBlocks, entityMap) :
-      convertFromRaw({
-        blocks: [{
-          text: '',
-          type: 'header-one',
-        }, {
-          text: '',
-          type: 'unstyled',
-        }],
-        entityMap: {},
+    const rawValue = !_.isEmpty(value) ? value : {
+      blocks: [{
+        text: '',
+        type: 'header-one',
+      }, {
+        text: '',
+        type: 'unstyled',
+      }],
+      entityMap: [],
+    };
+
+    // initial format is the typeof { blocks: [...], entityMap: [...] }
+    // it should be morphed to the type of { blocks: [...], entityMap: { 0: {}, 1: {}, ...}};
+    // and the field '__typename' should be deleted
+    const entityMapObject = {};
+    if (rawValue.entityMap && rawValue.entityMap.length > 0) {
+      rawValue.entityMap.forEach((doc, i) => {
+        delete doc.data.__typename;
+        entityMapObject[i] = doc;
       });
-    const editorState = EditorState.createWithContent(contentState, decorator); 
+    }
+    rawValue.entityMap = entityMapObject;
+
+    const contentState = convertFromRaw(rawValue);
+    const editorState = EditorState.createWithContent(contentState, EntityMappers); 
 
     this.state = {
       name,
       editorState,
-      linkUrl: null,
-      imageUrl: null,
-      videoUrl: null,
       showLinkPopup: false,
       showImagePopup: false,
       showVideoPopup: false,
@@ -131,9 +95,10 @@ class WysiwygEditor extends React.Component {
     const contentState = state ?
       state.getCurrentContent() : editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
+    rawContentState.entityMap = Object.keys(rawContentState.entityMap).sort().map(i => rawContentState.entityMap[i]);
 
     const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
-    const content = stateToHTML(contentState);
+    const content = rawContentState;
 
     onChange(name, { title, content });
   }
@@ -143,29 +108,24 @@ class WysiwygEditor extends React.Component {
     const selection = editorState.getSelection();
 
     // get Link URL on the current selection or on the caret position
-    let linkUrl = null;
-    if (selection.isCollapsed()) {
-
-    } else {
+    if (!selection.isCollapsed()) {
       const contentState = editorState.getCurrentContent();
       const startKey = editorState.getSelection().getStartKey();
       const startOffset = editorState.getSelection().getStartOffset();
       const blockWithLinkAtBeginning = contentState.getBlockForKey(startKey);
       const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset);
       if (linkKey) {
-        const linkInstance = contentState.getEntity(linkKey);
-        linkUrl = linkInstance.getData().url;
+        const data = contentState.getEntity(linkKey).getData();
+        this.setState({
+          link: data,
+          showLinkPopup: !this.state.showLinkPopup,
+        });
+      } else {
+        this.setState({
+          link: null,
+          showLinkPopup: !this.state.showLinkPopup,
+        });
       }
-    }
-
-    if (selection.isCollapsed() && !linkUrl) {
-      console.log('no selected text');
-      return;
-    } else {
-      this.setState({
-        linkUrl,
-        showLinkPopup: !this.state.showLinkPopup,
-      });
     }
   }
 
@@ -194,7 +154,6 @@ class WysiwygEditor extends React.Component {
     this.setState({ editorState: state });
 
     const { autoSave } = this.props;
-
     if (autoSave > 0) {
       if (this.autoSaveHandle) {
         clearTimeout(this.autoSaveHandle);
@@ -228,7 +187,7 @@ class WysiwygEditor extends React.Component {
    * 
    * @param {*} url 
    */
-  handleLinkUrl(url) {
+  handleLinkUrl(url, target = '_self') {
     const { editorState } = this.state;
     const contentState = editorState.getCurrentContent();
 
@@ -236,7 +195,7 @@ class WysiwygEditor extends React.Component {
       const contentStateWithEntity = contentState.createEntity(
         'LINK',
         'MUTABLE',
-        { url },
+        { url, target },
       );
       const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
       const newEditorState = EditorState.set(editorState, {
@@ -250,25 +209,23 @@ class WysiwygEditor extends React.Component {
 
       this.setState({
         editorState: editorStateUpdated,
-        linkUrl: null,
+        link: null,
         showLinkPopup: false,
       }, () => {
         setTimeout(() => this.editor.current.focus(), 0);
       });
-    } else {
-
     }
   }
 
-  handleImageUrl(url) {
-    const { editorState } = this.state;
-    const contentState = editorState.getCurrentContent();
-
-    if (url) {
+  handleImageUrl(e) {
+    this.props.onImagePopup((url, className = '') => {
+      const { editorState } = this.state;
+      const contentState = editorState.getCurrentContent();
+  
       const contentStateWithEntity = contentState.createEntity(
         'IMAGE',
         'MUTABLE',
-        { src: url },
+        { url, className },
       );
       const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
       const newEditorState = EditorState.set(editorState, {
@@ -282,17 +239,14 @@ class WysiwygEditor extends React.Component {
 
       this.setState({
         editorState: editorStateUpdated,
-        imageUrl: null,
         showImagePopup: false,
       }, () => {
         setTimeout(() => this.editor.current.focus(), 0);
       });
-    } else {
-
-    }
+    });
   }
 
-  handleVideoUrl(url) {
+  handleVideoUrl(url, className = '') {
     const { editorState } = this.state;
     const contentState = editorState.getCurrentContent();
 
@@ -300,7 +254,7 @@ class WysiwygEditor extends React.Component {
       const contentStateWithEntity = contentState.createEntity(
         'VIDEO',
         'MUTABLE',
-        { src: url },
+        { url, className },
       );
       const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
       const newEditorState = EditorState.set(editorState, {
@@ -325,11 +279,10 @@ class WysiwygEditor extends React.Component {
   }
 
   render() {
-    const { placeholder, ImageUpload } = this.props;
+    const { placeholder, onImagePopup } = this.props;
     const {
       editorState,
-      linkUrl,
-      imageUrl,
+      link,
       videoUrl,
       showLinkPopup,
       showImagePopup,
@@ -358,21 +311,15 @@ class WysiwygEditor extends React.Component {
           onInlineStyle={this.handleInlineStyle}
           onBlockType={this.handleBlockType}
           onLinkPopup={this.toggleLinkPopup}
-          onImagePopup={this.toggleImagePopup}
+          onImagePopup={this.handleImageUrl}
           onVideoPopup={this.toggleVideoPopup}
         />
         <LinkPopup
+          key={showLinkPopup}
           show={showLinkPopup}
-          value={linkUrl}
+          value={link}
           onSubmit={this.handleLinkUrl}
           onClose={this.toggleLinkPopup}
-        />
-        <ImagePopup
-          show={showImagePopup}
-          value={imageUrl}
-          Upload={ImageUpload}
-          onSubmit={this.handleImageUrl}
-          onClose={this.toggleImagePopup}
         />
         <VideoPopup
           show={showVideoPopup}
@@ -387,16 +334,16 @@ class WysiwygEditor extends React.Component {
 
 WysiwygEditor.propTypes = {
   name: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.object,
   placeholder: PropTypes.string,
   autoFocus: PropTypes.bool,
   autoSave: PropTypes.number,
-  imageUploadCallback: PropTypes.func,
+  onImagePopup: PropTypes.func,
 };
 
 WysiwygEditor.defaultProps = {
   name: 'editor',
-  value: '',
+  value: {},
   autoFocus: false,
   autoSave: 3000,
 };
