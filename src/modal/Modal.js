@@ -18,13 +18,13 @@ class Modal extends React.Component {
   }
 
   render() {
-    const { className, appElementId, show, title, children } = this.props;
+    const { className, appElementId, show, title, full, children } = this.props;
 
     if (!show) return null;
 
     return (
       <ReactModal
-        className={`Modal ${className}`.trim()}
+        className={`Modal ${full ? 'full' : ''} ${className}`.trim()}
         overlayClassName="ModalOverlay"
         isOpen={show}
         appElement={document.getElementById(appElementId)}
@@ -50,6 +50,7 @@ Modal.propTypes = {
   appElementId: PropTypes.string,
   show: PropTypes.bool,
   title: PropTypes.string,
+  full: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
@@ -58,6 +59,7 @@ Modal.defaultProps = {
   appElementId: 'root',
   show: true,
   title: '',
+  full: false,
 };
 
 export default Modal;
