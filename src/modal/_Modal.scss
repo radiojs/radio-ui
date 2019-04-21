@@ -5,6 +5,7 @@
   bottom: 0;
   left: 0;
   background: $colorModalOverlayBg;
+  z-index: $zIndexModal;
 }
 
 .Modal {
@@ -19,7 +20,7 @@
   background: $colorModalBg;
   outline: none;
   -webkit-overflow-scrolling: touch;
-
+  
   > header {
     position: relative;
     height: $headerHeight;

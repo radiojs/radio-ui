@@ -9,7 +9,6 @@ import {
   EditorState,
   RichUtils,
 } from 'draft-js';
-import { stateToHTML } from 'draft-js-export-html';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
@@ -88,17 +87,19 @@ class WysiwygEditor extends React.Component {
     }
   }
 
-  saveContent(state) {
+  saveContent(rawContent) {
     const { onChange } = this.props;
     const { editorState, name } = this.state;
 
-    const contentState = state ?
-      state.getCurrentContent() : editorState.getCurrentContent();
-    const rawContentState = convertToRaw(contentState);
-    rawContentState.entityMap = Object.keys(rawContentState.entityMap).sort().map(i => rawContentState.entityMap[i]);
+    let saveContent = rawContent;
+    if (!rawContent) {
+      saveContent = convertToRaw(editorState.getCurrentContent());  
+    }
 
-    const title = (rawContentState.blocks[0] && rawContentState.blocks[0].text);
-    const content = rawContentState;
+    saveContent.entityMap = Object.keys(saveContent.entityMap).sort().map(i => saveContent.entityMap[i]);
+
+    const title = (saveContent.blocks[0] && saveContent.blocks[0].text);
+    const content = saveContent;
 
     onChange(name, { title, content });
   }
@@ -151,6 +152,12 @@ class WysiwygEditor extends React.Component {
   }
 
   handleChange(state) {
+    const rawContentBefore = convertToRaw(this.state.editorState.getCurrentContent());
+    const rawContent = convertToRaw(state.getCurrentContent());
+
+    // do nothing if the content has not changed
+    if (JSON.stringify(rawContentBefore) === JSON.stringify(rawContent)) return;
+
     this.setState({ editorState: state });
 
     const { autoSave } = this.props;
@@ -161,10 +168,10 @@ class WysiwygEditor extends React.Component {
       }
   
       this.autoSaveHandle = setTimeout(() => {
-        this.saveContent(state);
+        this.saveContent(rawContent);
       }, this.props.autoSave);
     } else {
-      this.saveContent(state);
+      this.saveContent(rawContent);
     }
   }
 
