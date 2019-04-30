@@ -42,8 +42,10 @@ class WysiwygEditor extends React.Component {
     const entityMapObject = {};
     if (rawValue.entityMap && rawValue.entityMap.length > 0) {
       rawValue.entityMap.forEach((doc, i) => {
-        delete doc.data.__typename;
-        entityMapObject[i] = doc;
+        if (doc && doc.data) {
+          delete doc.data.__typename;
+          entityMapObject[i] = doc;
+        }
       });
     }
     rawValue.entityMap = entityMapObject;
@@ -59,8 +61,8 @@ class WysiwygEditor extends React.Component {
       showVideoPopup: false,
     };
 
-    this.autoSaveHandle = null;
-    this.saveContent = this.saveContent.bind(this);
+    this.bufferHandle = null;
+    this.convertContent = this.convertContent.bind(this);
     this.toggleLinkPopup = this.toggleLinkPopup.bind(this);
     this.toggleImagePopup = this.toggleImagePopup.bind(this);
     this.toggleVideoPopup = this.toggleVideoPopup.bind(this);
@@ -80,28 +82,22 @@ class WysiwygEditor extends React.Component {
   }
 
   componentWillUnmount() {
-    if (this.autoSaveHandle) {
-      clearTimeout(this.autoSaveHandle);
-      this.autoSaveHandle = null;
-      this.saveContent();
+    if (this.bufferHandle) {
+      clearTimeout(this.bufferHandle);
+      this.bufferHandle = null;
     }
   }
 
-  saveContent(rawContent) {
-    const { onChange } = this.props;
-    const { editorState, name } = this.state;
+  convertContent(rawContent) {
+    const { editorState } = this.state;
 
-    let saveContent = rawContent;
-    if (!rawContent) {
-      saveContent = convertToRaw(editorState.getCurrentContent());  
-    }
+    const converted = rawContent || convertToRaw(editorState.getCurrentContent());
+    converted.entityMap = Object.keys(converted.entityMap).sort().map(i => converted.entityMap[i]);
 
-    saveContent.entityMap = Object.keys(saveContent.entityMap).sort().map(i => saveContent.entityMap[i]);
-
-    const title = (saveContent.blocks[0] && saveContent.blocks[0].text);
-    const content = saveContent;
-
-    onChange(name, { title, content });
+    return {
+      title: converted.blocks[0] && converted.blocks[0].text,
+      content: converted,
+    };
   }
 
   toggleLinkPopup() {
@@ -152,26 +148,29 @@ class WysiwygEditor extends React.Component {
   }
 
   handleChange(state) {
-    const rawContentBefore = convertToRaw(this.state.editorState.getCurrentContent());
+    const { onChange } = this.props;
+    const { editorState, name } = this.state;
+
+    const rawContentBefore = convertToRaw(editorState.getCurrentContent());
     const rawContent = convertToRaw(state.getCurrentContent());
+
+    this.setState({ editorState: state });
 
     // do nothing if the content has not changed
     if (JSON.stringify(rawContentBefore) === JSON.stringify(rawContent)) return;
 
-    this.setState({ editorState: state });
-
-    const { autoSave } = this.props;
-    if (autoSave > 0) {
-      if (this.autoSaveHandle) {
-        clearTimeout(this.autoSaveHandle);
-        this.autoSaveHandle = null;
+    const { bufferDuration } = this.props;
+    if (bufferDuration > 0) {
+      if (this.bufferHandle) {
+        clearTimeout(this.bufferHandle);
+        this.bufferHandle = null;
       }
   
-      this.autoSaveHandle = setTimeout(() => {
-        this.saveContent(rawContent);
-      }, this.props.autoSave);
+      this.bufferHandle = setTimeout(() => {
+        onChange(name, this.convertContent(rawContent));
+      }, this.props.bufferDuration);
     } else {
-      this.saveContent(rawContent);
+      onChange(name, this.convertContent(rawContent));
     }
   }
 
@@ -286,13 +285,12 @@ class WysiwygEditor extends React.Component {
   }
 
   render() {
-    const { placeholder, onImagePopup } = this.props;
+    const { placeholder } = this.props;
     const {
       editorState,
       link,
       videoUrl,
       showLinkPopup,
-      showImagePopup,
       showVideoPopup,
     } = this.state;
 
@@ -344,7 +342,7 @@ WysiwygEditor.propTypes = {
   value: PropTypes.object,
   placeholder: PropTypes.string,
   autoFocus: PropTypes.bool,
-  autoSave: PropTypes.number,
+  bufferDuration: PropTypes.number,
   onImagePopup: PropTypes.func,
 };
 
@@ -352,7 +350,7 @@ WysiwygEditor.defaultProps = {
   name: 'editor',
   value: {},
   autoFocus: false,
-  autoSave: 3000,
+  bufferDuration: 500,
 };
 
 export default WysiwygEditor;

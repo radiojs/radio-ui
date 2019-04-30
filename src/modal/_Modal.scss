@@ -42,7 +42,6 @@
 
   > main {
     position: relative;
-    padding: 10px;
 
     .message {
       text-align: center;
@@ -102,7 +101,6 @@
       height: calc(100% - #{$headerHeight});
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-
     }
   }
 }
