@@ -1,5 +1,7 @@
 import Box from './box/Box';
 
+import Dropdown from './dropdown/Dropdown';
+
 import Button from './form/Button';
 import CheckBox from './form/CheckBox';
 import FileButton from './form/FileButton';
@@ -36,6 +38,7 @@ export {
   Button,
   CheckBox,
   Confirm,
+  Dropdown,
   ErrorMessages,
   FileButton,
   Form,

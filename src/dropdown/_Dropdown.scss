@@ -1,0 +1,20 @@
+.Dropdown {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: solid 1px $colorBorder;
+    border-radius: $borderRadius;
+    background: $colorWhite;
+    z-index: $zIndexSidebar;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            width: 100%;
+            max-width: 240px;
+        }
+    }
+}
